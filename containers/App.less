@@ -1,8 +1,35 @@
 //TODO - media queries 
 
+
+
 body { 
-   margin: 0%;
- }
+   background: #191919;
+  }
+
+  .aurora_container{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index : -1;
+  }
+  
+  .aurora_background {
+    background: linear-gradient(233deg, #00ff05, #00ffd0, #00ff32, #00ffe6);
+    background-size: 800% 800%;
+    height: 100%;
+    width: 100%;
+    opacity: 0%;
+    animation: aurora_animation 29s ease infinite;
+
+    @keyframes aurora_animation {
+        0%{background-position:92% 0%}
+        50%{background-position:9% 100%}
+        100%{background-position:92% 0%}
+    }
+  }
+
  img.footer { 
     width: 100vw;
     padding-left: 0%;
@@ -12,5 +39,7 @@ body {
   }
 
   h1, h2, h3{
+    color: #5D5D5D;
     padding-left: 30px;
+    z-index: 1;
   }

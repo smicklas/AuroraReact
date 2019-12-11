@@ -3,7 +3,7 @@ import { Footer } from './Footer';
 import { Header } from './Header';
 import './App.less';
 
-var apiKey = ""; //insert Darkspy API here TODO - add secrets file 
+var apiKey = "2fbcacf48f941877cd34dd5bef830b92"; //insert Darkspy API here TODO - add secrets file 
 var url = 'https://api.forecast.io/forecast/';
 
 export default class App extends Component {
@@ -70,6 +70,7 @@ callWeatherApi = async(latitude, longitude) => {
 //Scrap for NOAA aurora data, find KP index value for latitude and longitude received 
 //This is subject to breakage if the format of the data changes...
 //TODO: proper error handling 
+//TODO: add style changes based on aurora visibility 
 parseAurora = async(latitude, longitude) =>{
   let response;
   var aurora = "";
@@ -109,16 +110,16 @@ parseAurora = async(latitude, longitude) =>{
       var aurora_percentage = final_map[final_pos];
       switch(true){
         case (aurora_percentage < 25):
-          aurora = "Slim to no Aurora visiblity in perfect conditions.";
+          aurora = "Little to no probability of visible aurora.";
           break;
         case (aurora_percentage < 50):
-          aurora = "Low Aurora visibility in perfect conditions."
+          aurora = "Low probability of visible aurora."
           break;
         case(aurora_percentage < 75):
-          aurora = "Medium Aurora visibility in perfect conditions."
+          aurora = "Medium probabiltiy of visible aurora."
           break;
         case(aurora_percentage <= 100):
-          aurora = "High Aurora visibility in perfect conditions."
+          aurora = "High probability of visible aurora."
           break;
       }
       scope.setState({aurora_activity : aurora});
@@ -132,6 +133,7 @@ parseAurora = async(latitude, longitude) =>{
 };
 
 //Take Dark Sky cloud coverage value, translate for easier readability
+//TODO - style changes based on cloud coverage
 parseCloudCover = async() => {
   if(this.state.data.currently.cloudCover <= 0.25){
     this.setState({cloud_coverage : "Little to no cloud coverage."})
@@ -156,12 +158,17 @@ componentDidMount(){
           <Header 
               header =  "Welcome to AuroraCast" 
               subheader_1 = "Please enable your location to retrieve data." 
-              subheader_2 = ""/>
-            : 
+              />
+            : [
             <Header 
-              header =  {this.state.visibility} 
-              subheader_1 = {this.state.aurora_activity} 
-              subheader_2 = {this.state.cloud_coverage}/>  
+              header =  {this.state.aurora_activity} 
+              subheader_1 = {this.state.cloud_coverage}
+              key = "2" 
+              />,
+              <div className = "aurora_container" key = "3">
+                <div className = "aurora_background" key= "1" />
+              </div>
+            ]
           }
           <Footer />
         </div>
@@ -169,7 +176,3 @@ componentDidMount(){
     }
 }
 
-
-//getCloudCoverage()
-//getAuroraData()
-//displayVisiblity()
