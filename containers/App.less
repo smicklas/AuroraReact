@@ -1,7 +1,14 @@
 //TODO - media queries 
 
 
+@font-face {
+  font-family: SegoeUI;
+  src: url(../assets/font/SegoeUI.ttf);
+}
 
+div {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 body { 
    background: #191919;
   }
@@ -12,7 +19,7 @@ body {
     width: 100%;
     top: 0;
     left: 0;
-    z-index : -1;
+    z-index: -20;
   }
   
   .aurora_background {
@@ -20,7 +27,7 @@ body {
     background-size: 800% 800%;
     height: 100%;
     width: 100%;
-    opacity: 0%;
+    opacity: 100%;
     animation: aurora_animation 29s ease infinite;
 
     @keyframes aurora_animation {
@@ -35,11 +42,32 @@ body {
     padding-left: 0%;
     position: absolute;
     left: 0%;
-    bottom: 0%;
+    bottom: 40%;
+    z-index: -10;
   }
 
+  .footer_block{ 
+    width: 100vw;
+    height: 40%;
+    padding-left: 0%;
+    position: absolute;
+    left: 0%;
+    bottom: 0%;
+    background: black;
+    z-index: -10;
+  }
+
+  .header_container {
+    position: absolute;
+    bottom: 25%;
+    z-index: 20;
+  }
+
+  h1{
+    font-size: 40px;
+  }
   h1, h2, h3{
-    color: #5D5D5D;
+    color: rgb(255, 255, 255);
     padding-left: 30px;
-    z-index: 1;
+    z-index: inherit;
   }

@@ -2,6 +2,11 @@ import React from 'react';
 
 export class Footer extends React.Component {
     render(){
-        return <img className="footer" src="../assets/img/treeline.png"/>
+        return(
+        <div>
+            <img className="footer" src="../assets/img/treeline.png"/>
+            <div className="footer_block"></div>
+        </div>
+        );
     }
 }

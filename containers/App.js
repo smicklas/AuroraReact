@@ -3,7 +3,7 @@ import { Footer } from './Footer';
 import { Header } from './Header';
 import './App.less';
 
-var apiKey = "2fbcacf48f941877cd34dd5bef830b92"; //insert Darkspy API here TODO - add secrets file 
+var apiKey = ""; //insert Darkspy API here TODO - add secrets file 
 var url = 'https://api.forecast.io/forecast/';
 
 export default class App extends Component {
@@ -16,10 +16,11 @@ export default class App extends Component {
           longitude: null,
           response: '',
           loading : true,
-          aurora_activity : null,
+          aurora_activity : null, //Plain text 
+          aurora_opacity: null, //Value to scale aurora animation opacity
           cloud_coverage: null
         };
-        this.parseAurora = this.parseAurora.bind(this);
+        //this.parseAurora = this.parseAurora.bind(this);
     }
 
    
@@ -49,6 +50,7 @@ getCoordinatesAndWeather() {
 callWeatherApi = async(latitude, longitude) => {
     //let response = await fetch(url + apiKey + "/" + latitude + "," + longitude);
     //console.log(url + apiKey + "/" + latitude + "," + longitude);
+
     //Testing data, this was easier than setting up API proxy server but does not allow for complete testing. 
     var body = require('../test/test_data.json');
     //console.log(response);
@@ -73,9 +75,10 @@ callWeatherApi = async(latitude, longitude) => {
 //TODO: add style changes based on aurora visibility 
 parseAurora = async(latitude, longitude) =>{
   let response;
-  var aurora = "";
+  var aurora_string = "";
   try{
-  fetch('https://services.swpc.noaa.gov/text/aurora-nowcast-map.txt')
+  //fetch('https://services.swpc.noaa.gov/text/aurora-nowcast-map.txt')
+  fetch('test/aurora-nowcast-map.txt') //Read from local test file so I can stop hitting NOAA with every reload 
   .then(res => res.blob()) // Gets the response and returns it as a blob
   .then(blob => {
     var reader = new FileReader();
@@ -104,30 +107,34 @@ parseAurora = async(latitude, longitude) =>{
       }else{
         x = longitude;
       }
-      x = x / 0.3284615; //Have to scale longitude value to match scale of map from NOAA
-      var y = (latitude + 90) / 0.3515625; //Scale latitude value 
+      //Have to scale lat/long values to match scale of map of NOAA 
+      x = x / 0.3284615; 
+      var y = (latitude + 90) / 0.3515625; 
       var final_pos = Math.round((y * 1024) + x);
-      var aurora_percentage = final_map[final_pos];
+      var aurora_percentage = final_map[final_pos]; 
       switch(true){
         case (aurora_percentage < 25):
-          aurora = "Little to no probability of visible aurora.";
+          aurora_string = "Little to no probability of visible aurora.";
           break;
         case (aurora_percentage < 50):
-          aurora = "Low probability of visible aurora."
+          aurora_string = "Low probability of visible aurora."
           break;
         case(aurora_percentage < 75):
-          aurora = "Medium probabiltiy of visible aurora."
+          aurora_string = "Medium probabiltiy of visible aurora."
           break;
         case(aurora_percentage <= 100):
-          aurora = "High probability of visible aurora."
+          aurora_string = "High probability of visible aurora."
           break;
       }
-      scope.setState({aurora_activity : aurora});
+      aurora_percentage = 100;
+      scope.setState({aurora_activity : aurora_string});
+      scope.setState({aurora_opacity : aurora_percentage * 0.5}); //Scale opacity 
     }
     reader.readAsText(blob);
     var filesize = blob.size;
   });
   } catch(err){
+    scope.setState({aurora_activity : "Error fetching aurora data."});
     console.log("Error fetching aurora data from NOAA.");
   } 
 };
@@ -140,16 +147,17 @@ parseCloudCover = async() => {
   }else if(this.state.data.currently.cloudCover <= .50){
     this.setState({cloud_coverage : "Some cloud coverage."})
   }else if(this.state.data.currently.cloudCover <= 0.75){
-    this.setState({cloud_coverage : "High cloud coverage"})
+    this.setState({cloud_coverage : "High cloud coverage."})
   }else{
     this.setState({cloud_coverage : "Very high cloud coverage."})
   }
 };
 
-//Get coordinates after mounting
+//Kick off the location data collection + weather data, aurora data analysis 
 componentDidMount(){
     this.getCoordinatesAndWeather();
 } 
+
     render () {
         return (
         <div className = "App">
@@ -163,10 +171,10 @@ componentDidMount(){
             <Header 
               header =  {this.state.aurora_activity} 
               subheader_1 = {this.state.cloud_coverage}
-              key = "2" 
+              key = "header" 
               />,
-              <div className = "aurora_container" key = "3">
-                <div className = "aurora_background" key= "1" />
+              <div className = "aurora_container" key = "aurora_container">
+                <div className = "aurora_background" key= "aurora_background" style = {{ opacity: `${ this.state.aurora_opacity }%` }}/>
               </div>
             ]
           }
