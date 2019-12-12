@@ -126,7 +126,6 @@ parseAurora = async(latitude, longitude) =>{
           aurora_string = "High probability of visible aurora."
           break;
       }
-      aurora_percentage = 100;
       scope.setState({aurora_activity : aurora_string});
       scope.setState({aurora_opacity : aurora_percentage * 0.5}); //Scale opacity 
     }
